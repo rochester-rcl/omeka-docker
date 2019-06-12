@@ -1,0 +1,3 @@
+# create databases
+CREATE DATABASE IF NOT EXISTS `omeka`;
+CREATE DATABASE IF NOT EXISTS `omekas`;
