@@ -26,4 +26,8 @@ services:
     image: jromphf/omeka
     ports:
       - "80:80"
+    volumes:
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./omeka-files:/var/www/html/omeka/files
+      - ./omekas-files:/var/www/html/omeka-s/files
     restart: always
