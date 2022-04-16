@@ -1,27 +1,20 @@
-FROM php:5.6-apache
+FROM php:7.4-apache
 
-RUN a2enmod rewrite
-
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get -qq update && apt-get -qq -y --no-install-recommends install \
-    curl \
-    unzip \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libmcrypt-dev \
-    libpng-dev \
-    libjpeg-dev \
-    libmemcached-dev \
-    zlib1g-dev \
-    imagemagick
-
-# install the PHP extensions we need
-RUN docker-php-ext-install -j$(nproc) iconv mcrypt \
-    pdo pdo_mysql mysqli gd
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
-
-RUN docker-php-ext-install exif && \
-    docker-php-ext-enable exif
+RUN apt-get update && apt-get install -y \
+        git \
+        gnupg \
+        imagemagick \
+        libcurl4-gnutls-dev \
+        libxml2-dev \
+        libicu-dev \
+        unzip \
+    && docker-php-ext-install intl pdo_mysql \
+    && docker-php-ext-install mysqli && docker-php-ext-enable mysqli \
+    && pecl install solr-2.5.1 \
+    && docker-php-ext-enable solr \
+    && cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
+    && a2enmod rewrite \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN curl -J -L -s -k \
     'https://github.com/omeka/Omeka/releases/download/v2.7/omeka-2.7.zip' \
@@ -41,7 +34,7 @@ COPY ./.htaccess /var/www/html/omeka/.htaccess
 COPY ./imagemagick-policy.xml /etc/ImageMagick/policy.xml
 
 RUN curl -J -L -s -k \
-  'https://github.com/omeka/omeka-s/releases/download/v1.4.0/omeka-s-1.4.0.zip' \
+  'https://github.com/omeka/omeka-s/releases/download/v3.1.1/omeka-s-3.1.1.zip' \
   -o /var/www/omeka-s.zip \
   &&  unzip -q /var/www/omeka-s.zip -d /var/www/ \
   &&  rm /var/www/omeka-s.zip \

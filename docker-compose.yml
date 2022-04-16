@@ -30,4 +30,6 @@ services:
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
       - ./omeka-files:/var/www/html/omeka/files
       - ./omekas-files:/var/www/html/omeka-s/files
+      - ./omekas-modules:/var/www/html/omeka-s/modules
+      - ./omeka-plugins:/var/www/html/omeka/plugins
     restart: always
